@@ -1,0 +1,75 @@
+type Family implements Person {
+  """A person age. Optional"""
+  age: String
+  """A person name"""
+  name: String!
+  """Family relationship"""
+  relationship: String!
+}
+
+type Family2 implements Person {
+  """A person age. Optional"""
+  age: String
+  """A person name"""
+  name: String!
+  """Family relationship"""
+  relationship: String!
+}
+
+type Mutation {
+  """Update a person with given payload"""
+  updatePerson(person: UpdatePersonData!): Person!
+}
+
+interface Person {
+  """A person age. Optional"""
+  age: String
+  """A person name"""
+  name: String!
+}
+
+type Query {
+  getFamily: Family!
+  getFamily2: Family2!
+  """A query to get a person"""
+  getPerson(id: String!): Person!
+  "FIXME: 痛點3: 註釋/文件 需要在 .gql 以及 typescript 裡面寫兩次"
+  company: HybridCompany
+}
+
+input UpdatePersonData {
+  """A person age. Optional"""
+  age: String
+  """hi"""
+  interest: String
+  """A person name"""
+  name: String!
+}
+
+interface Company {
+  name: String!
+  employees: Int!
+}
+
+type LimitedCompany implements Company {
+  "FIXME: 痛點1: 當一個 type 需繼承自另一 interface 時，interface 所具有的欄位都要重複寫一遍"
+  name: String!
+  employees: Int!
+  "FIXME: 痛點2: 當有欄位需要變更 required/optional 時，需要手動修改 typescript interface 以保持同步"
+  capital: Int!
+}
+
+type UnlimitedCompany implements Company {
+  "FIXME: 痛點1: 當一個 type 需繼承自另一 interface 時，interface 所具有的欄位都要重複寫一遍"
+  name: String!
+  employees: Int!
+  shareholders: [String]
+  createdAt: Time
+}
+
+union HybridCompany = LimitedCompany | UnlimitedCompany
+
+schema {
+  query: Query
+  mutation: Mutation
+}
